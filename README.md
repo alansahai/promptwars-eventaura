@@ -97,7 +97,7 @@ Output strictly in valid JSON matching the EventPlan schema.
 ### Installation & Run
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/event-aura.git
+git clone https://github.com/alansahai/promptwars-eventaura.git
 cd event-aura
 
 # 2. Install dependencies
@@ -147,9 +147,9 @@ EventAura leverages Google Gemini and an intelligent deterministic simulation en
 ✨ High-contrast WCAG 2.1 AA accessible UI (< 370 kB bundle!)
 
 Check out the live project and code:
-🔗 GitHub: [Insert GitHub Link]
-🌐 Live Demo: [Insert Demo Link]
-🎥 Video Walkthrough: [Insert Video Link]
+🔗 GitHub: https://github.com/alansahai/promptwars-eventaura
+🌐 Live Demo: [Insert Deployed Vercel URL]
+🎥 Video Walkthrough: [Insert Unlisted YouTube/Drive Link]
 
 #PromptWars #GenAI #Gemini #React #VibeCoding #EventPlanning #WebDevelopment
 ```
