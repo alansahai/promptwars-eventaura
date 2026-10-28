@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Key, Shield, X, Check, ExternalLink } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 
 export const ApiKeyModal: React.FC = () => {
   const { isApiKeyModalOpen, setIsApiKeyModalOpen, apiKey, saveApiKey } = useEvent();

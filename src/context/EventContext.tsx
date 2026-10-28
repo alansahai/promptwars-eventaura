@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import type {
   EventPlan,
@@ -10,40 +10,13 @@ import type {
 } from '../types/event';
 import { SAMPLE_WEDDING, SAMPLE_BIRTHDAY, SAMPLE_COMMUNITY } from '../data/sampleEvents';
 import { generateEventPlan, executeScenarioShift, getStoredApiKey, setStoredApiKey } from '../services/geminiService';
+import { EventContext } from './EventContextInstance';
+import type { EventContextType, TabType } from './EventContextInstance';
 
-export type TabType = 'overview' | 'budget' | 'timeline' | 'vendors' | 'ideas' | 'whatif' | 'runofshow';
-
-interface EventContextType {
-  plan: EventPlan;
-  activeTab: TabType;
-  setActiveTab: (tab: TabType) => void;
-  theme: 'dark' | 'light';
-  toggleTheme: () => void;
-  isLoading: boolean;
-  loadingMessage: string;
-  generationSource: 'gemini' | 'simulation' | 'preloaded';
-  isApiKeyModalOpen: boolean;
-  setIsApiKeyModalOpen: (open: boolean) => void;
-  isWizardOpen: boolean;
-  setIsWizardOpen: (open: boolean) => void;
-  apiKey: string;
-  saveApiKey: (key: string, persist: boolean) => void;
-  loadSample: (type: 'wedding' | 'birthday' | 'community') => void;
-  createPlan: (details: EventDetails) => Promise<void>;
-  applyShift: (shift: ScenarioShift) => Promise<void>;
-  updateTaskStatus: (taskId: string, status: TaskStatus) => void;
-  updateCategories: (categories: BudgetCategory[]) => void;
-  addVendorQuote: (quote: VendorQuote) => void;
-  updateVendorStatus: (quoteId: string, status: VendorQuote['status']) => void;
-  toggleRunOfShowItem: (itemId: string) => void;
-  applyTradeOff: (tradeoffId: string) => void;
-  triggerConfetti: () => void;
-}
+export type { EventContextType, TabType };
 
 const STORAGE_EVENT_KEY = 'event_aura_active_plan';
 const STORAGE_THEME_KEY = 'event_aura_theme';
-
-const EventContext = createContext<EventContextType | undefined>(undefined);
 
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [plan, setPlan] = useState<EventPlan>(() => {
@@ -61,21 +34,27 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem(STORAGE_THEME_KEY) as 'dark' | 'light';
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        return savedTheme;
+      }
+    }
+    return 'dark';
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>('');
   const [generationSource, setGenerationSource] = useState<'gemini' | 'simulation' | 'preloaded'>('preloaded');
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
   const [isWizardOpen, setIsWizardOpen] = useState<boolean>(false);
-  const [apiKey, setApiKey] = useState<string>('');
+  const [apiKey, setApiKey] = useState<string>(() => getStoredApiKey());
 
-  // Initialize theme and API key
+  // Sync theme changes to document attribute
   useEffect(() => {
-    const savedTheme = (localStorage.getItem(STORAGE_THEME_KEY) as 'dark' | 'light') || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    setApiKey(getStoredApiKey());
-  }, []);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   // Sync plan to localStorage
   useEffect(() => {
@@ -269,12 +248,4 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
     </EventContext.Provider>
   );
-};
-
-export const useEvent = () => {
-  const context = useContext(EventContext);
-  if (!context) {
-    throw new Error('useEvent must be used within an EventProvider');
-  }
-  return context;
 };

@@ -8,8 +8,8 @@ import {
   SlidersHorizontal,
   Clock,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
-import type { TabType } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
+import type { TabType } from '../../hooks/useEvent';
 
 export const TabNav: React.FC = () => {
   const { activeTab, setActiveTab, plan } = useEvent();

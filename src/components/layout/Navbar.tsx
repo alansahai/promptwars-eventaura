@@ -9,7 +9,7 @@ import {
   ChevronDown,
   Layers,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 
 export const Navbar: React.FC = () => {
   const {

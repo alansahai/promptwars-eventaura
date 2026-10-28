@@ -9,18 +9,24 @@ import {
   Clock,
   HeartHandshake,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import { formatCurrency } from '../../utils/currency';
+import { calculateDaysRemaining, formatEventDate } from '../../utils/date';
 
 export const OverviewHeader: React.FC = () => {
   const { plan, setActiveTab } = useEvent();
   const { details, budget, tasks, ideas } = plan;
 
-  // Calculate days remaining until event
-  const today = new Date();
-  const eventDate = new Date(details.targetDate);
-  const diffTime = eventDate.getTime() - today.getTime();
-  const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  // Calculate days remaining and formatted date purely via utilities
+  const daysRemaining = React.useMemo(
+    () => calculateDaysRemaining(details.targetDate),
+    [details.targetDate]
+  );
+
+  const formattedEventDate = React.useMemo(
+    () => formatEventDate(details.targetDate),
+    [details.targetDate]
+  );
 
   // Tasks completed count
   const completedTasks = tasks.filter((t) => t.status === 'completed').length;
@@ -79,7 +85,7 @@ export const OverviewHeader: React.FC = () => {
             <div className="flex items-center gap-4" style={{ flexWrap: 'wrap', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               <div className="flex items-center gap-1">
                 <Calendar size={16} style={{ color: 'var(--accent-gold)' }} />
-                <span>{new Date(details.targetDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                <span>{formattedEventDate}</span>
               </div>
               <div className="flex items-center gap-1">
                 <MapPin size={16} style={{ color: 'var(--accent-indigo)' }} />

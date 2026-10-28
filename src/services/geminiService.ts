@@ -1,4 +1,4 @@
-import type { EventDetails, EventPlan, ScenarioShift } from '../types/event';
+import type { EventDetails, EventPlan, ScenarioShift, BudgetCategory } from '../types/event';
 import { generateSimulatedPlan, recalculateScenarioShift } from './simulationEngine';
 
 // Key retrieval: Session storage or Vite environment variable (Never hardcoded!)
@@ -120,13 +120,34 @@ Do NOT wrap in markdown backticks or any other text. Output pure JSON only.
     const contingencyAmount = Math.round((details.totalBudget * contingencyPercent) / 100);
     const effectiveBudget = details.totalBudget - contingencyAmount;
 
-    const categories = (parsed.categories || fallback.budget.categories).map((c: any, index: number) => ({
-      ...c,
+    interface GeminiCategoryInput {
+      id?: string;
+      name: string;
+      percentage: number;
+      allocatedAmount: number;
+      spentAmount?: number;
+      color?: string;
+      icon?: string;
+      notes?: string;
+      tradeoffAdvice?: string;
+      isCustom?: boolean;
+    }
+
+    const rawCategories = (parsed.categories as GeminiCategoryInput[] | undefined) || fallback.budget.categories;
+    const categories: BudgetCategory[] = rawCategories.map((c: GeminiCategoryInput, index: number) => ({
+      name: c.name,
+      percentage: c.percentage,
+      allocatedAmount: c.allocatedAmount,
       id: c.id || `cat-${index}`,
-      spentAmount: 0,
+      spentAmount: c.spentAmount || 0,
       color: c.color || fallback.budget.categories[index % fallback.budget.categories.length]?.color || '#F59E0B',
       icon: c.icon || 'Sparkles',
+      notes: c.notes || `Allocated target for ${c.name}`,
+      tradeoffAdvice: c.tradeoffAdvice,
+      isCustom: c.isCustom,
     }));
+
+    const allocatedTotal = categories.reduce((s: number, c: BudgetCategory) => s + c.allocatedAmount, 0);
 
     const plan: EventPlan = {
       details,
@@ -135,8 +156,8 @@ Do NOT wrap in markdown backticks or any other text. Output pure JSON only.
         currency: details.currency,
         contingencyPercent,
         contingencyAmount,
-        allocatedTotal: categories.reduce((s: number, c: any) => s + c.allocatedAmount, 0),
-        remainingAmount: effectiveBudget - categories.reduce((s: number, c: any) => s + c.allocatedAmount, 0),
+        allocatedTotal,
+        remainingAmount: effectiveBudget - allocatedTotal,
         categories,
       },
       tasks: parsed.tasks?.length ? parsed.tasks : fallback.tasks,

@@ -1,5 +1,6 @@
 import React from 'react';
-import { EventProvider, useEvent } from './context/EventContext';
+import { EventProvider } from './context/EventContext';
+import { useEvent } from './hooks/useEvent';
 import { Navbar } from './components/layout/Navbar';
 import { TabNav } from './components/layout/TabNav';
 import { Footer } from './components/layout/Footer';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Check, Scale } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import { formatCurrency } from '../../utils/currency';
 
 interface TradeOffModalProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, CheckCircle2, Circle, User, MapPin, Printer } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 
 export const RunOfShowView: React.FC = () => {
   const { plan, toggleRunOfShowItem } = useEvent();

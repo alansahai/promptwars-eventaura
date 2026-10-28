@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { BudgetCategory, Currency } from '../../types/event';
 import { formatCurrency } from '../../utils/currency';
 
@@ -17,23 +17,32 @@ export const DonutChart: React.FC<DonutChartProps> = ({ categories, currency }) 
   const center = size / 2;
   const circumference = 2 * Math.PI * radius;
 
-  // Calculate cumulative offsets
-  const totalAllocated = categories.reduce((sum, c) => sum + c.allocatedAmount, 0);
+  // Calculate cumulative offsets immutably
+  const totalAllocated = useMemo(
+    () => categories.reduce((sum, c) => sum + c.allocatedAmount, 0),
+    [categories]
+  );
 
-  let accumulatedPercent = 0;
-  const slices = categories.map((cat) => {
-    const percent = totalAllocated > 0 ? cat.allocatedAmount / totalAllocated : 0;
-    const strokeDasharray = `${percent * circumference} ${circumference}`;
-    const strokeDashoffset = -accumulatedPercent * circumference;
-    accumulatedPercent += percent;
-
-    return {
-      cat,
-      percent,
-      strokeDasharray,
-      strokeDashoffset,
-    };
-  });
+  const slices = useMemo(() => {
+    return categories.reduce<{
+      slices: Array<{ cat: BudgetCategory; percent: number; strokeDasharray: string; strokeDashoffset: number }>;
+      acc: number;
+    }>(
+      (state, cat) => {
+        const percent = totalAllocated > 0 ? cat.allocatedAmount / totalAllocated : 0;
+        const strokeDasharray = `${percent * circumference} ${circumference}`;
+        const strokeDashoffset = -state.acc * circumference;
+        return {
+          slices: [
+            ...state.slices,
+            { cat, percent, strokeDasharray, strokeDashoffset },
+          ],
+          acc: state.acc + percent,
+        };
+      },
+      { slices: [], acc: 0 }
+    ).slices;
+  }, [categories, totalAllocated, circumference]);
 
   return (
     <div className="flex flex-col items-center justify-center p-4">

@@ -6,7 +6,7 @@ import {
   Link2,
   Filter,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import type { TaskStatus, MilestonePhase } from '../../types/event';
 
 export const TimelineView: React.FC = () => {

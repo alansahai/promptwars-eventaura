@@ -7,7 +7,7 @@ import {
   HelpCircle,
   ShieldAlert,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import { formatCurrency } from '../../utils/currency';
 import type { VendorQuote } from '../../types/event';
 

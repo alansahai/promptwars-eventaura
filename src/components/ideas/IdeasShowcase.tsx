@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lightbulb, HeartHandshake } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 
 export const IdeasShowcase: React.FC = () => {
   const { plan } = useEvent();

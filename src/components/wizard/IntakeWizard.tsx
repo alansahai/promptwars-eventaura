@@ -12,32 +12,35 @@ import {
   Star,
   Check,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import type { EventDetails, EventType, EventVibe, Currency } from '../../types/event';
 
 export const IntakeWizard: React.FC = () => {
   const { isWizardOpen, setIsWizardOpen, createPlan, isLoading } = useEvent();
   const [step, setStep] = useState<number>(1);
 
-  const [formData, setFormData] = useState<EventDetails>({
-    id: `event-${Date.now()}`,
-    title: '',
-    type: 'wedding',
-    vibe: 'traditional',
-    targetDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    guestCount: 150,
-    currency: 'INR',
-    totalBudget: 1200000,
-    location: 'Banquets & Lawns, Mumbai',
-    specialNeeds: 'Wheelchair access ramp at main entrance; quiet zone for elders.',
-    dietaryPreferences: ['Vegetarian', 'Jain Option'],
-    priorities: {
-      venue: 4,
-      catering: 5,
-      photography: 4,
-      decor: 3,
-      entertainment: 3,
-    },
+  const [formData, setFormData] = useState<EventDetails>(() => {
+    const defaultTargetDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    return {
+      id: `event-${Date.now()}`,
+      title: '',
+      type: 'wedding',
+      vibe: 'traditional',
+      targetDate: defaultTargetDate,
+      guestCount: 150,
+      currency: 'INR',
+      totalBudget: 1200000,
+      location: 'Banquets & Lawns, Mumbai',
+      specialNeeds: 'Wheelchair access ramp at main entrance; quiet zone for elders.',
+      dietaryPreferences: ['Vegetarian', 'Jain Option'],
+      priorities: {
+        venue: 4,
+        catering: 5,
+        photography: 4,
+        decor: 3,
+        entertainment: 3,
+      },
+    };
   });
 
   if (!isWizardOpen) return null;

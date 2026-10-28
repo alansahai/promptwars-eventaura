@@ -5,7 +5,7 @@ import {
   Scale,
   Info,
 } from 'lucide-react';
-import { useEvent } from '../../context/EventContext';
+import { useEvent } from '../../hooks/useEvent';
 import { formatCurrency } from '../../utils/currency';
 import { DonutChart } from './DonutChart';
 import { TradeOffModal } from './TradeOffModal';
