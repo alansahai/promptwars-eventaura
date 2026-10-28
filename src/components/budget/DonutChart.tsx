@@ -47,7 +47,14 @@ export const DonutChart: React.FC<DonutChartProps> = ({ categories, currency }) 
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <div style={{ position: 'relative', width: `${size}px`, height: `${size}px` }}>
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          style={{ transform: 'rotate(-90deg)' }}
+          role="img"
+          aria-label={`Donut chart showing budget allocation across ${categories.length} categories totalling ${formatCurrency(totalAllocated, currency)}`}
+        >
           {/* Background Track */}
           <circle
             cx={center}

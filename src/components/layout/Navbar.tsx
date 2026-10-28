@@ -101,6 +101,8 @@ export const Navbar: React.FC = () => {
 
             {sampleMenuOpen && (
               <div
+                role="menu"
+                aria-label="Demo event presets"
                 className="glass-modal animate-fade-in"
                 style={{
                   position: 'absolute',
@@ -116,6 +118,7 @@ export const Navbar: React.FC = () => {
                 }}
               >
                 <button
+                  role="menuitem"
                   className="btn btn-ghost"
                   style={{ justifyContent: 'flex-start', width: '100%', textAlign: 'left', fontSize: '0.85rem' }}
                   onClick={() => {
@@ -127,6 +130,7 @@ export const Navbar: React.FC = () => {
                   {plan.details.type === 'wedding' && <Check size={14} style={{ marginLeft: 'auto', color: 'var(--accent-gold)' }} />}
                 </button>
                 <button
+                  role="menuitem"
                   className="btn btn-ghost"
                   style={{ justifyContent: 'flex-start', width: '100%', textAlign: 'left', fontSize: '0.85rem' }}
                   onClick={() => {
@@ -138,6 +142,7 @@ export const Navbar: React.FC = () => {
                   {plan.details.type === 'birthday' && <Check size={14} style={{ marginLeft: 'auto', color: 'var(--accent-gold)' }} />}
                 </button>
                 <button
+                  role="menuitem"
                   className="btn btn-ghost"
                   style={{ justifyContent: 'flex-start', width: '100%', textAlign: 'left', fontSize: '0.85rem' }}
                   onClick={() => {

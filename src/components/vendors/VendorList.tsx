@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Briefcase,
   Plus,
@@ -34,6 +34,18 @@ export const VendorList: React.FC = () => {
   });
 
   const categories = Array.from(new Set(vendorQuotes.map((q) => q.category)));
+
+  // Close modal on Escape key
+  const handleEscape = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') setIsAddModalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAddModalOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isAddModalOpen, handleEscape]);
 
   const filteredQuotes = vendorQuotes.filter(
     (q) => activeCategoryFilter === 'all' || q.category === activeCategoryFilter
