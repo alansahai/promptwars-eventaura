@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import type {
   EventPlan,
@@ -63,29 +63,29 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [plan]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
     document.documentElement.setAttribute('data-theme', nextTheme);
     localStorage.setItem(STORAGE_THEME_KEY, nextTheme);
-  };
+  }, [theme]);
 
-  const saveApiKey = (key: string, persist: boolean) => {
+  const saveApiKey = useCallback((key: string, persist: boolean) => {
     setStoredApiKey(key, persist);
     setApiKey(key.trim());
     setIsApiKeyModalOpen(false);
-  };
+  }, []);
 
-  const triggerConfetti = () => {
+  const triggerConfetti = useCallback(() => {
     confetti({
       particleCount: 80,
       spread: 70,
       origin: { y: 0.6 },
       colors: ['#F59E0B', '#6366F1', '#10B981', '#EC4899'],
     });
-  };
+  }, []);
 
-  const loadSample = (type: 'wedding' | 'birthday' | 'community') => {
+  const loadSample = useCallback((type: 'wedding' | 'birthday' | 'community') => {
     setIsLoading(true);
     setLoadingMessage(`Loading ${type.toUpperCase()} showcase plan...`);
     setTimeout(() => {
@@ -96,9 +96,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setIsLoading(false);
       triggerConfetti();
     }, 300);
-  };
+  }, [triggerConfetti]);
 
-  const createPlan = async (details: EventDetails) => {
+  const createPlan = useCallback(async (details: EventDetails) => {
     setIsLoading(true);
     setLoadingMessage('GenAI is analyzing priorities, allocating budget, and scheduling timeline...');
     try {
@@ -113,9 +113,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [triggerConfetti]);
 
-  const applyShift = async (shift: ScenarioShift) => {
+  const applyShift = useCallback(async (shift: ScenarioShift) => {
     setIsLoading(true);
     setLoadingMessage('Dynamic Scenario Engine recalculating budget allocations and timeline bottlenecks...');
     try {
@@ -127,9 +127,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [plan, triggerConfetti]);
 
-  const updateTaskStatus = (taskId: string, status: TaskStatus) => {
+  const updateTaskStatus = useCallback((taskId: string, status: TaskStatus) => {
     setPlan((prev) => {
       const updatedTasks = prev.tasks.map((t) => (t.id === taskId ? { ...t, status } : t));
       return { ...prev, tasks: updatedTasks, lastUpdated: new Date().toISOString() };
@@ -137,9 +137,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (status === 'completed') {
       triggerConfetti();
     }
-  };
+  }, [triggerConfetti]);
 
-  const updateCategories = (categories: BudgetCategory[]) => {
+  const updateCategories = useCallback((categories: BudgetCategory[]) => {
     setPlan((prev) => {
       const allocatedTotal = categories.reduce((sum, c) => sum + c.allocatedAmount, 0);
       const remainingAmount = prev.budget.totalBudget - prev.budget.contingencyAmount - allocatedTotal;
@@ -154,25 +154,25 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         lastUpdated: new Date().toISOString(),
       };
     });
-  };
+  }, []);
 
-  const addVendorQuote = (quote: VendorQuote) => {
+  const addVendorQuote = useCallback((quote: VendorQuote) => {
     setPlan((prev) => ({
       ...prev,
       vendorQuotes: [quote, ...prev.vendorQuotes],
       lastUpdated: new Date().toISOString(),
     }));
-  };
+  }, []);
 
-  const updateVendorStatus = (quoteId: string, status: VendorQuote['status']) => {
+  const updateVendorStatus = useCallback((quoteId: string, status: VendorQuote['status']) => {
     setPlan((prev) => ({
       ...prev,
       vendorQuotes: prev.vendorQuotes.map((q) => (q.id === quoteId ? { ...q, status } : q)),
       lastUpdated: new Date().toISOString(),
     }));
-  };
+  }, []);
 
-  const toggleRunOfShowItem = (itemId: string) => {
+  const toggleRunOfShowItem = useCallback((itemId: string) => {
     setPlan((prev) => ({
       ...prev,
       runOfShow: prev.runOfShow.map((item) =>
@@ -180,9 +180,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       ),
       lastUpdated: new Date().toISOString(),
     }));
-  };
+  }, []);
 
-  const applyTradeOff = (tradeoffId: string) => {
+  const applyTradeOff = useCallback((tradeoffId: string) => {
     const trade = plan.tradeOffOptions?.find((t) => t.id === tradeoffId);
     if (!trade) return;
 
@@ -214,37 +214,44 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
     });
     triggerConfetti();
-  };
+  }, [plan.tradeOffOptions, triggerConfetti]);
+
+  /** Memoize entire context value to prevent unnecessary child re-renders */
+  const contextValue = useMemo(() => ({
+    plan,
+    activeTab,
+    setActiveTab,
+    theme,
+    toggleTheme,
+    isLoading,
+    loadingMessage,
+    generationSource,
+    isApiKeyModalOpen,
+    setIsApiKeyModalOpen,
+    isWizardOpen,
+    setIsWizardOpen,
+    apiKey,
+    saveApiKey,
+    loadSample,
+    createPlan,
+    applyShift,
+    updateTaskStatus,
+    updateCategories,
+    addVendorQuote,
+    updateVendorStatus,
+    toggleRunOfShowItem,
+    applyTradeOff,
+    triggerConfetti,
+  }), [
+    plan, activeTab, theme, isLoading, loadingMessage, generationSource,
+    isApiKeyModalOpen, isWizardOpen, apiKey,
+    toggleTheme, saveApiKey, loadSample, createPlan, applyShift,
+    updateTaskStatus, updateCategories, addVendorQuote, updateVendorStatus,
+    toggleRunOfShowItem, applyTradeOff, triggerConfetti,
+  ]);
 
   return (
-    <EventContext.Provider
-      value={{
-        plan,
-        activeTab,
-        setActiveTab,
-        theme,
-        toggleTheme,
-        isLoading,
-        loadingMessage,
-        generationSource,
-        isApiKeyModalOpen,
-        setIsApiKeyModalOpen,
-        isWizardOpen,
-        setIsWizardOpen,
-        apiKey,
-        saveApiKey,
-        loadSample,
-        createPlan,
-        applyShift,
-        updateTaskStatus,
-        updateCategories,
-        addVendorQuote,
-        updateVendorStatus,
-        toggleRunOfShowItem,
-        applyTradeOff,
-        triggerConfetti,
-      }}
-    >
+    <EventContext.Provider value={contextValue}>
       {children}
     </EventContext.Provider>
   );

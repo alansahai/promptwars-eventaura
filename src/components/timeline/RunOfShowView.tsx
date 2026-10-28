@@ -2,7 +2,7 @@ import React from 'react';
 import { Clock, CheckCircle2, Circle, User, MapPin, Printer } from 'lucide-react';
 import { useEvent } from '../../hooks/useEvent';
 
-export const RunOfShowView: React.FC = () => {
+export const RunOfShowView: React.FC = React.memo(() => {
   const { plan, toggleRunOfShowItem } = useEvent();
   const { runOfShow } = plan;
 
@@ -108,4 +108,5 @@ export const RunOfShowView: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+RunOfShowView.displayName = 'RunOfShowView';

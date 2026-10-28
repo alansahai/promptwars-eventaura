@@ -119,6 +119,11 @@ export const IntakeWizard: React.FC = () => {
           </h2>
 
           <div
+            role="progressbar"
+            aria-valuenow={step}
+            aria-valuemin={1}
+            aria-valuemax={4}
+            aria-label={`Wizard step ${step} of 4`}
             style={{
               width: '100%',
               height: '6px',

@@ -146,10 +146,11 @@ export const OverviewHeader: React.FC = () => {
       {/* 4 Quick Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
         {/* Budget Metric */}
-        <div
+        <button
           className="glass-card"
           onClick={() => setActiveTab('budget')}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%' }}
+          aria-label="View budget overview"
         >
           <div className="flex items-center justify-between mb-2">
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Total Allocated Budget</span>
@@ -162,13 +163,14 @@ export const OverviewHeader: React.FC = () => {
             <span>Buffer: {formatCurrency(budget.contingencyAmount, details.currency)}</span>
             <span style={{ color: 'var(--accent-emerald)' }}>Balanced</span>
           </div>
-        </div>
+        </button>
 
         {/* Per-Guest Economics */}
-        <div
+        <button
           className="glass-card"
           onClick={() => setActiveTab('budget')}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%' }}
+          aria-label="View per-guest budget breakdown"
         >
           <div className="flex items-center justify-between mb-2">
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Per-Guest Economics</span>
@@ -180,13 +182,14 @@ export const OverviewHeader: React.FC = () => {
           <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
             Across {details.guestCount} guests (venue + catering + decor)
           </p>
-        </div>
+        </button>
 
         {/* Timeline Completion */}
-        <div
+        <button
           className="glass-card"
           onClick={() => setActiveTab('timeline')}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%' }}
+          aria-label={`View timeline: ${progressPercent}% complete`}
         >
           <div className="flex items-center justify-between mb-2">
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Planning Progress</span>
@@ -196,6 +199,11 @@ export const OverviewHeader: React.FC = () => {
             {completedTasks} / {tasks.length}
           </div>
           <div
+            role="progressbar"
+            aria-valuenow={progressPercent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Planning ${progressPercent}% complete`}
             style={{
               width: '100%',
               height: '6px',
@@ -214,13 +222,14 @@ export const OverviewHeader: React.FC = () => {
               }}
             />
           </div>
-        </div>
+        </button>
 
         {/* Vendor Quotes Evaluated */}
-        <div
+        <button
           className="glass-card"
           onClick={() => setActiveTab('vendors')}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%' }}
+          aria-label="View vendor quotes and intelligence"
         >
           <div className="flex items-center justify-between mb-2">
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Vendor Intelligence</span>
@@ -232,7 +241,7 @@ export const OverviewHeader: React.FC = () => {
           <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
             {plan.vettingQuestions.length} AI negotiation probes active
           </p>
-        </div>
+        </button>
       </div>
 
       {/* Featured GenAI Concept Spotlight */}
