@@ -131,6 +131,8 @@ export const WhatIfSimulator: React.FC = () => {
               step="5"
               value={guestDelta}
               onChange={(e) => setGuestDelta(Number(e.target.value))}
+              aria-label="Guest count change"
+              aria-valuetext={`${guestDelta >= 0 ? '+' : ''}${guestDelta} guests, projected total: ${projectedGuests}`}
               style={{ width: '100%', accentColor: 'var(--accent-emerald)', cursor: 'pointer' }}
             />
           </div>
@@ -165,6 +167,8 @@ export const WhatIfSimulator: React.FC = () => {
               step="5"
               value={budgetPercentDelta}
               onChange={(e) => setBudgetPercentDelta(Number(e.target.value))}
+              aria-label="Budget percentage change"
+              aria-valuetext={`${budgetPercentDelta >= 0 ? '+' : ''}${budgetPercentDelta}%, projected budget: ${projectedBudget}`}
               style={{ width: '100%', accentColor: 'var(--accent-gold)', cursor: 'pointer' }}
             />
           </div>
@@ -199,6 +203,8 @@ export const WhatIfSimulator: React.FC = () => {
               step="7"
               value={daysOffsetDelta}
               onChange={(e) => setDaysOffsetDelta(Number(e.target.value))}
+              aria-label="Days to accelerate event date"
+              aria-valuetext={daysOffsetDelta > 0 ? `${daysOffsetDelta} days earlier` : 'No date change'}
               style={{ width: '100%', accentColor: 'var(--accent-indigo)', cursor: 'pointer' }}
             />
           </div>

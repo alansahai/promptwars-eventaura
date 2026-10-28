@@ -52,7 +52,7 @@ export const TimelineView: React.FC = () => {
             <Filter size={15} style={{ color: 'var(--text-muted)' }} />
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'pending' | 'completed')}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -77,6 +77,11 @@ export const TimelineView: React.FC = () => {
           <span className="badge badge-indigo">{progressPercent}% Locked</span>
         </div>
         <div
+          role="progressbar"
+          aria-valuenow={progressPercent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Milestone progress: ${progressPercent}% of tasks completed`}
           style={{
             width: '100%',
             height: '8px',

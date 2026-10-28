@@ -92,6 +92,7 @@ export const VendorList: React.FC = () => {
           onClick={() => setActiveCategoryFilter('all')}
           className={`btn ${activeCategoryFilter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
           style={{ fontSize: '0.82rem', padding: '0.4rem 0.85rem' }}
+          aria-pressed={activeCategoryFilter === 'all'}
         >
           <span>All Quotes ({vendorQuotes.length})</span>
         </button>
@@ -101,6 +102,7 @@ export const VendorList: React.FC = () => {
             onClick={() => setActiveCategoryFilter(cat)}
             className={`btn ${activeCategoryFilter === cat ? 'btn-primary' : 'btn-secondary'}`}
             style={{ fontSize: '0.82rem', padding: '0.4rem 0.85rem' }}
+            aria-pressed={activeCategoryFilter === cat}
           >
             <span>{cat}</span>
           </button>
@@ -291,6 +293,7 @@ export const VendorList: React.FC = () => {
       {isAddModalOpen && (
         <div
           className="modal-overlay fixed inset-0 flex items-center justify-center p-4 z-50 animate-fade-in"
+          role="presentation"
           style={{
             position: 'fixed',
             inset: 0,
@@ -300,9 +303,16 @@ export const VendorList: React.FC = () => {
             justifyContent: 'center',
             zIndex: 9999,
           }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsAddModalOpen(false); }}
         >
-          <div className="glass-modal p-6 w-full max-w-lg" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 1rem 0' }}>Add Vendor Quotation</h3>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-quote-modal-title"
+            className="glass-modal p-6 w-full max-w-lg"
+            style={{ maxHeight: '90vh', overflowY: 'auto' }}
+          >
+            <h3 id="add-quote-modal-title" style={{ margin: '0 0 1rem 0' }}>Add Vendor Quotation</h3>
             <form onSubmit={handleCreateQuote} className="flex flex-col gap-3">
               <div>
                 <label className="input-label">Vendor Business Name</label>

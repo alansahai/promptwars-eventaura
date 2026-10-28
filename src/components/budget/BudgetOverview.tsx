@@ -40,6 +40,8 @@ export const BudgetOverview: React.FC = () => {
       {/* Top Warning Banner if Over Budget */}
       {isOverBudget && (
         <div
+          role="alert"
+          aria-live="assertive"
           className="glass-card animate-glow"
           style={{
             borderColor: 'var(--accent-rose)',
@@ -230,6 +232,8 @@ export const BudgetOverview: React.FC = () => {
                     max="60"
                     value={cat.percentage}
                     onChange={(e) => handlePercentageChange(cat.id, Number(e.target.value))}
+                    aria-label={`${cat.name} budget allocation percentage`}
+                    aria-valuetext={`${cat.percentage}% — ${formatCurrency(cat.allocatedAmount, details.currency)}`}
                     style={{ flex: 1, accentColor: cat.color, cursor: 'pointer' }}
                   />
                   {cat.tradeoffAdvice && (
