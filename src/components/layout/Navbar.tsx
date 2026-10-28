@@ -26,6 +26,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <header
+      role="banner"
       className="glass-panel no-print"
       style={{
         position: 'sticky',

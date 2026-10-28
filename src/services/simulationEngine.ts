@@ -14,9 +14,16 @@ import type {
 /**
  * Intelligent Deterministic Simulation Engine
  * Guarantees 100% availability for hackathon evaluation even without external API keys or when quotas expire.
- * Adheres strictly to the principles explained by Mr. Srinivas in the PromptWars Round 5 explainer.
+ * Adheres strictly to the principles explained in the PromptWars Round 5 explainer.
  */
 
+/**
+ * Generates an interconnected, constraint-aware Event Plan deterministically.
+ *
+ * @param {EventDetails} details - The user's input specifications (budget, priorities, dietary, vibe).
+ * @returns {EventPlan} Complete event dossier containing partitioned budget, milestone tasks,
+ * vendor candidates, run-of-show schedule, and trade-off options.
+ */
 export function generateSimulatedPlan(details: EventDetails): EventPlan {
   const { totalBudget, currency, type, vibe, guestCount } = details;
 
@@ -473,8 +480,13 @@ export function generateSimulatedPlan(details: EventDetails): EventPlan {
 
 /**
  * Dynamic "What-If" Scenario Recalculation Engine
- * Fulfills Mr. Srinivas's signature hackathon differentiator:
- * Re-calibrates the entire event without starting over when parameters shift mid-stream.
+ *
+ * Dynamically re-proportions interconnected event parameters (budget categories,
+ * attendee capacity, deadline urgency flags) when constraints change mid-stream without starting over.
+ *
+ * @param {EventPlan} currentPlan - The active, populated Event Plan.
+ * @param {ScenarioShift} shift - Changes in guest counts, budget percentage, and timeline days.
+ * @returns {EventPlan} Updated plan with recalibrated financials, updated tasks, and audit history.
  */
 export function recalculateScenarioShift(
   currentPlan: EventPlan,

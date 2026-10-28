@@ -13,63 +13,21 @@ import {
   Check,
 } from 'lucide-react';
 import { useEvent } from '../../hooks/useEvent';
-import type { EventDetails, EventType, EventVibe, Currency } from '../../types/event';
+import type { EventDetails, Currency } from '../../types/event';
+import {
+  EVENT_TYPE_OPTIONS as eventTypes,
+  EVENT_VIBE_OPTIONS as vibes,
+  DIETARY_OPTIONS as dietaryOptions,
+  getInitialEventDetails,
+} from '../../constants/eventOptions';
+import { sanitizePlanTitle } from '../../utils/sanitize';
 
 export const IntakeWizard: React.FC = () => {
   const { isWizardOpen, setIsWizardOpen, createPlan, isLoading } = useEvent();
   const [step, setStep] = useState<number>(1);
-
-  const [formData, setFormData] = useState<EventDetails>(() => {
-    const defaultTargetDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    return {
-      id: `event-${Date.now()}`,
-      title: '',
-      type: 'wedding',
-      vibe: 'traditional',
-      targetDate: defaultTargetDate,
-      guestCount: 150,
-      currency: 'INR',
-      totalBudget: 1200000,
-      location: 'Banquets & Lawns, Mumbai',
-      specialNeeds: 'Wheelchair access ramp at main entrance; quiet zone for elders.',
-      dietaryPreferences: ['Vegetarian', 'Jain Option'],
-      priorities: {
-        venue: 4,
-        catering: 5,
-        photography: 4,
-        decor: 3,
-        entertainment: 3,
-      },
-    };
-  });
+  const [formData, setFormData] = useState<EventDetails>(getInitialEventDetails);
 
   if (!isWizardOpen) return null;
-
-  const eventTypes: { type: EventType; label: string; icon: string; desc: string }[] = [
-    { type: 'wedding', label: 'Wedding', icon: '🏰', desc: 'Sangeet, Ceremony, Banquet, multi-day coordination' },
-    { type: 'birthday', label: 'Milestone Birthday', icon: '🎂', desc: '1st, 18th, 50th Golden, custom cake & entertainment' },
-    { type: 'community', label: 'Community Festival', icon: '🌱', desc: 'Charity carnival, cultural fest, volunteer roles' },
-    { type: 'anniversary', label: 'Anniversary', icon: '🥂', desc: 'Silver/Golden jubilee, intimate dining & memory video' },
-    { type: 'corporate', label: 'Corporate Gala', icon: '💼', desc: 'Annual summit, awards ceremony, keynote staging' },
-  ];
-
-  const vibes: { vibe: EventVibe; label: string; emoji: string }[] = [
-    { vibe: 'traditional', label: 'Traditional / Heritage', emoji: '🪔' },
-    { vibe: 'luxury', label: 'Grand Luxury & Glamour', emoji: '✨' },
-    { vibe: 'rustic', label: 'Rustic & Bohemian', emoji: '🌿' },
-    { vibe: 'modern-chic', label: 'Modern Chic & Sleek', emoji: '🍸' },
-    { vibe: 'minimalist', label: 'Minimalist & Eco-friendly', emoji: '🍃' },
-    { vibe: 'festive', label: 'Vibrant & Festive Carnival', emoji: '🎉' },
-  ];
-
-  const dietaryOptions = [
-    'Vegetarian Counters',
-    'Jain Available',
-    'Vegan Specialties',
-    'Gluten-Free Section',
-    'Halal Certified',
-    'Live Chaat & Dessert Bar',
-  ];
 
   const toggleDietary = (item: string) => {
     setFormData((prev) => {
@@ -95,7 +53,8 @@ export const IntakeWizard: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalTitle = formData.title.trim() || `${formData.type.toUpperCase()} Celebration`;
+    const rawTitle = formData.title.trim() || `${formData.type.toUpperCase()} Celebration`;
+    const finalTitle = sanitizePlanTitle(rawTitle);
     await createPlan({
       ...formData,
       title: finalTitle,

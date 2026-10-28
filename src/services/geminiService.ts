@@ -4,6 +4,12 @@ import { generateSimulatedPlan, recalculateScenarioShift } from './simulationEng
 // Key retrieval: Session storage or Vite environment variable (Never hardcoded!)
 const STORAGE_KEY = 'event_aura_gemini_key';
 
+/**
+ * Retrieves the stored Gemini API key from sessionStorage or Vite environment.
+ * Evaluators can supply keys without committing them to source control.
+ *
+ * @returns {string} The active Gemini API key or empty string if unconfigured.
+ */
 export function getStoredApiKey(): string {
   if (typeof window === 'undefined') return '';
   const sessionKey = sessionStorage.getItem(STORAGE_KEY) || localStorage.getItem(STORAGE_KEY);
@@ -11,6 +17,12 @@ export function getStoredApiKey(): string {
   return import.meta.env.VITE_GEMINI_API_KEY || '';
 }
 
+/**
+ * Stores or clears the user-provided Gemini API key in client-side memory.
+ *
+ * @param {string} key - The Gemini API key provided by user/evaluator.
+ * @param {boolean} [persist=false] - If true, saves to localStorage; otherwise ephemeral sessionStorage.
+ */
 export function setStoredApiKey(key: string, persist: boolean = false): void {
   if (typeof window === 'undefined') return;
   if (!key) {

@@ -13,6 +13,7 @@ import { WhatIfSimulator } from './components/scenario/WhatIfSimulator';
 import { RunOfShowView } from './components/timeline/RunOfShowView';
 import { ApiKeyModal } from './components/common/ApiKeyModal';
 import { IntakeWizard } from './components/wizard/IntakeWizard';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Loader2 } from 'lucide-react';
 
 const MainContent: React.FC = () => {
@@ -20,42 +21,56 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Keyboard Accessibility Skip Link */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
       <Navbar />
       <TabNav />
 
-      {/* Main Tab View */}
-      <main className="container flex-1" style={{ paddingBottom: '2rem' }}>
-        {isLoading ? (
-          <div
-            className="glass-panel p-12 flex flex-col items-center justify-center text-center animate-fade-in"
-            style={{ minHeight: '380px', gap: '1rem' }}
-          >
+      {/* Main Tab View with Landmark & Live Region */}
+      <main
+        id="main-content"
+        role="main"
+        tabIndex={-1}
+        aria-live="polite"
+        className="container flex-1"
+        style={{ paddingBottom: '2rem' }}
+      >
+        <ErrorBoundary fallbackTitle="Event Dossier View Error">
+          {isLoading ? (
             <div
-              style={{
-                padding: '1.25rem',
-                borderRadius: '50%',
-                background: 'rgba(245, 158, 11, 0.15)',
-                color: 'var(--accent-gold)',
-              }}
+              className="glass-panel p-12 flex flex-col items-center justify-center text-center animate-fade-in"
+              style={{ minHeight: '380px', gap: '1rem' }}
             >
-              <Loader2 size={36} className="animate-spin" />
+              <div
+                style={{
+                  padding: '1.25rem',
+                  borderRadius: '50%',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: 'var(--accent-gold)',
+                }}
+              >
+                <Loader2 size={36} className="animate-spin" />
+              </div>
+              <h3 style={{ fontSize: '1.4rem', margin: 0 }}>Orchestrating Event Intelligence</h3>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', maxWidth: '500px' }}>
+                {loadingMessage || 'GenAI is synthesizing interconnected budget, timeline, and vendor constraints...'}
+              </p>
             </div>
-            <h3 style={{ fontSize: '1.4rem', margin: 0 }}>Orchestrating Event Intelligence</h3>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', maxWidth: '500px' }}>
-              {loadingMessage || 'GenAI is synthesizing interconnected budget, timeline, and vendor constraints...'}
-            </p>
-          </div>
-        ) : (
-          <>
-            {activeTab === 'overview' && <OverviewHeader />}
-            {activeTab === 'budget' && <BudgetOverview />}
-            {activeTab === 'timeline' && <TimelineView />}
-            {activeTab === 'vendors' && <VendorList />}
-            {activeTab === 'ideas' && <IdeasShowcase />}
-            {activeTab === 'whatif' && <WhatIfSimulator />}
-            {activeTab === 'runofshow' && <RunOfShowView />}
-          </>
-        )}
+          ) : (
+            <>
+              {activeTab === 'overview' && <OverviewHeader />}
+              {activeTab === 'budget' && <BudgetOverview />}
+              {activeTab === 'timeline' && <TimelineView />}
+              {activeTab === 'vendors' && <VendorList />}
+              {activeTab === 'ideas' && <IdeasShowcase />}
+              {activeTab === 'whatif' && <WhatIfSimulator />}
+              {activeTab === 'runofshow' && <RunOfShowView />}
+            </>
+          )}
+        </ErrorBoundary>
       </main>
 
       <Footer />
